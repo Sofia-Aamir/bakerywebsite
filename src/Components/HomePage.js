@@ -1,37 +1,55 @@
 import React from 'react';
-// import '../CSS/HomePage.css'; // Import your Tailwind CSS file
-import homepage from '../images/homepage.png'
+import homepage from '../images/homepage.png';
 
 const HomePage = () => {
   return (
     <div
       className="bg-cover bg-center h-screen"
       style={{
-        backgroundImage: `url(${homepage})`, // Replace with your image path
+        backgroundImage: `url(${homepage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '100vh',
+        position: 'relative',
       }}
     >
-      <nav className="flex items-center justify-between p-6 bg-transparent">
+      <nav
+        className="flex items-center justify-between p-6 bg-transparent"
+        style={{ position: 'relative' }}
+      >
         {/* Website Name */}
-        <div className="text-white text-3xl font-bold">
-          SofiBake's
+        <div className="text-brown-light text-5xl font-bold ml-8">
+          Bake Bliss
         </div>
 
         {/* Navigation Links */}
-        <div className="flex space-x-8">
-          <a href="#home" className="text-white text-lg hover:text-yellow-400">Home</a>
-          <a href="#about" className="text-white text-lg hover:text-yellow-400">About Us</a>
-          <a href="#categories" className="text-white text-lg hover:text-yellow-400">Categories</a>
-          <a href="#contact" className="text-white text-lg hover:text-yellow-400">Contact Us</a>
+        <div className="flex space-x-8 mr-14">
+          <a href="#home" className="text-brown-light text-xl hover:text-yellow-400 hover:text-xl">
+            Home
+          </a>
+          <a href="#about" className="text-brown-light text-xl hover:text-yellow-400 hover:text-xl">
+            About Us
+          </a>
+          <a href="#categories" className="text-brown-light text-xl hover:text-yellow-400 hover:text-xl">
+            Categories
+          </a>
+          <a
+            href="#contact"
+            className="inline-flex items-center px-4 py-2 text-brown-light text-xl hover:text-yellow-400 hover:text-xl border border-brown-light rounded-full"
+            style={{ marginTop: '-7px' }}
+          >
+            Contact Us
+          </a>
 
           {/* Cart Icon */}
-          <a href="#cart" className="text-white text-lg hover:text-yellow-400">
+          <a href="#cart" className="text-brown-light text-3xl hover:text-yellow-400 hover:text-xl">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-6 h-6"
+              className="w-10 h-10"
             >
               <path
                 strokeLinecap="round"
@@ -43,11 +61,35 @@ const HomePage = () => {
         </div>
       </nav>
 
-      {/* Additional content can go here */}
-      <div className="flex items-center justify-center h-full text-center">
-        <h1 className="text-white text-6xl font-bold">
-          Welcome to SofiBake's
-        </h1>
+      {/* Tree Form Sentence */}
+      <div
+        className="absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/3 text-5xl font-bold text-brown-light"
+      >
+        <div className="flex flex-col items-start">
+          <div className="relative">
+            Freshly Baked Delights,
+          </div>
+          <div className="relative mt-2">
+            Every Day ...
+          </div>
+          <div className="relative mt-5 text-base text-black max-w-lg">
+            <p className="leading-tight">
+              Delicious treats for you. Crafted with love and care. Perfect for every occasion.<br />
+              Enjoy our wide selection of baked goods, made from the finest ingredients.<br />
+              From pastries to cakes, we ensure the highest quality and freshness in every bite.
+            </p>
+          </div>
+          {/* Explore Button */}
+          <div className="mt-8 flex justify-center">
+            <a
+              href="#explore"
+              className="inline-flex items-center px-6 py-3 text-white text-2xl font-semibold bg-brown-light rounded-full transform hover:scale-105 transition-transform"
+              style={{ backgroundColor: '#3e1f1c' }} // Brown color
+            >
+              Explore
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
