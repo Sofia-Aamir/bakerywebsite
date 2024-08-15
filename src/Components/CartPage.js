@@ -1,32 +1,35 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Navbar from './Navbar'; // Adjust the import path according to your project structure
+import React, { useState, useEffect } from 'react';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 const CartPage = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState(location.state?.cartItems || []);
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    return savedCartItems;
+  });
 
-  const handleRemoveFromCart = (indexToRemove) => {
-    const updatedCartItems = [...cartItems];
-    updatedCartItems.splice(indexToRemove, 1); // Remove the specific item at the given index
-    setCartItems(updatedCartItems);
-    // Optionally navigate to the cart page with updated items
-    navigate('/cart', { state: { cartItems: updatedCartItems } });
+  useEffect(() => {
+    // Save cart items to localStorage whenever they change
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  const handleRemoveFromCart = (productId) => {
+    const updatedItems = cartItems.filter(item => item.id !== productId);
+    setCartItems(updatedItems);
   };
 
   return (
     <div className="bg-[#cdac79] min-h-screen">
-      <Navbar /> {/* Include the Navbar component */}
+      <Navbar itemCount={cartItems.length} />
       <div className="container mx-auto p-4">
         <h2 className="text-center text-5xl font-bold text-brown-light mb-12">
           Your Cart
         </h2>
         {cartItems.length > 0 ? (
           <div>
-            {cartItems.map((item, index) => (
+            {cartItems.map((item) => (
               <div
-                key={index}
+                key={item.id}
                 className="flex items-center justify-between p-3 border-b border-gray-300 bg-[#ffe5b6] rounded-lg shadow-md mb-3"
               >
                 <div className="flex items-center space-x-4">
@@ -41,7 +44,7 @@ const CartPage = () => {
                 </div>
                 <p className="text-2xl font-semibold">Rs. {item.price}</p>
                 <button
-                  onClick={() => handleRemoveFromCart(index)}
+                  onClick={() => handleRemoveFromCart(item.id)}
                   className="text-white font-bold text-xl py-4 px-6 rounded-full bg-brown-light hover:bg-yellow-400 transition-colors duration-300"
                 >
                   Remove
@@ -53,6 +56,7 @@ const CartPage = () => {
           <p className="text-center text-lg">Your cart is empty.</p>
         )}
       </div>
+   
     </div>
   );
 };

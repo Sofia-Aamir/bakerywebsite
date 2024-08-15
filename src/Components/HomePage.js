@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import homepage from '../images/homepage.png';
 import Navbar from './Navbar';
-import CartIcon from './CartIcon'; // Import the CartIcon component
+import CartIcon from './CartIcon';
 import Footer from './Footer';
 import cake from '../images/cake.png';
 import biscuit from '../images/biscuits.png';
@@ -27,10 +27,23 @@ const HomePage = () => {
   const [startIndex, setStartIndex] = useState(0);
   const itemsToShow = 4;
 
-  const [cartItems, setCartItems] = useState([]); // State to manage cart items
+  // Load cart items from localStorage
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    return savedCartItems;
+  });
+
+  useEffect(() => {
+    // Save cart items to localStorage whenever they change
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const handleAddToCart = (product) => {
-    setCartItems([...cartItems, product]);
+    setCartItems((prevItems) => {
+      const updatedItems = [...prevItems, product];
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      return updatedItems;
+    });
   };
 
   const handleNextClick = () => {
@@ -56,11 +69,9 @@ const HomePage = () => {
           position: 'relative',
         }}
       >
-        <Navbar itemCount={cartItems.length} cartItems={cartItems} /> {/* Pass cartItems and itemCount */}
-        {/* Other components */}
-        <CartIcon itemCount={cartItems.length} cartItems={cartItems} /> {/* Display Cart Icon with item count */}
+        <Navbar itemCount={cartItems.length} cartItems={cartItems} />
+        <CartIcon itemCount={cartItems.length} cartItems={cartItems} />
 
-        {/* Tree Form Sentence */}
         <div className="absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/3 text-5xl font-bold text-brown-light">
           <div className="flex flex-col items-start">
             <div className="relative">Freshly Baked Delights,</div>
@@ -74,12 +85,11 @@ const HomePage = () => {
                 From pastries to cakes, we ensure the highest quality and freshness in every bite.
               </p>
             </div>
-            {/* Explore Button */}
             <div className="mt-8 flex justify-center">
               <a
                 href="#explore"
                 className="inline-flex items-center px-6 py-3 text-white text-2xl font-semibold bg-brown-light rounded-full transform hover:scale-105 transition-transform"
-                style={{ backgroundColor: '#3e1f1c' }} // Brown color
+                style={{ backgroundColor: '#3e1f1c' }}
               >
                 Explore
               </a>
@@ -88,7 +98,6 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Special Products Section */}
       <div className="bg-white py-7" style={{ marginTop: '-20px', backgroundColor: '#ffe5b6' }}>
         <h2 className="text-center text-5xl font-bold text-brown-light mb-12">
           Special Products
@@ -118,47 +127,45 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Our Products Section */}
       <div className="bg-white py-7" style={{ marginTop: '-20px', backgroundColor: '#cdac79' }}>
-  <h2 className="text-center text-5xl font-bold text-brown-light mb-12">
-    Our Products
-  </h2>
-  <div className="grid grid-cols-4 gap-5 px-10" style={{ marginTop: '-4px' }}>
-    {products.slice(0, 4).map((product) => (
-      <div
-        key={product.id}
-        className="border border-gray-300 p-4 rounded-lg shadow-lg text-center transform transition-transform duration-300 hover:translate-y-[-5px]"
-        style={{ backgroundColor: '#ffe5b6' }}
-      >
-        <div
-          className="w-full h-48 mx-auto overflow-hidden rounded-md"
-          style={{
-            backgroundImage: `url(${product.image})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        ></div>
-        <p className="mt-4 text-3xl font-semibold text-brown-light">
-          {product.name}
-        </p>
-        {/* Flex container for price and Add to Cart button */}
-        <div className="flex justify-between items-center mt-2">
-          <p className="text-2xl text-brown-light">
-            Rs. {product.price}
-          </p>
-          <button
-            onClick={() => handleAddToCart(product)}
-            className="text-white font-bold py-2 px-4 rounded-full bg-brown-light hover:bg-yellow-400 transition-colors duration-300"
-          >
-            Add to Cart
-          </button>
+        <h2 className="text-center text-5xl font-bold text-brown-light mb-12">
+          Our Products
+        </h2>
+        <div className="grid grid-cols-4 gap-5 px-10" style={{ marginTop: '-4px' }}>
+          {products.slice(0, 4).map((product) => (
+            <div
+              key={product.id}
+              className="border border-gray-300 p-4 rounded-lg shadow-lg text-center transform transition-transform duration-300 hover:translate-y-[-5px]"
+              style={{ backgroundColor: '#ffe5b6' }}
+            >
+              <div
+                className="w-full h-48 mx-auto overflow-hidden rounded-md"
+                style={{
+                  backgroundImage: `url(${product.image})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              ></div>
+              <p className="mt-4 text-3xl font-semibold text-brown-light">
+                {product.name}
+              </p>
+              <div className="flex justify-between items-center mt-2">
+                <p className="text-2xl text-brown-light">
+                  Rs. {product.price}
+                </p>
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  className="text-white font-bold py-2 px-4 rounded-full bg-brown-light hover:bg-yellow-400 transition-colors duration-300"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    ))}
-  </div>
-</div>
 
-<Footer/>
+      <Footer/>
     </div>
   );
 };
