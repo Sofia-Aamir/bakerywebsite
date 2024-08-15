@@ -1,50 +1,56 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // Updated import
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Navbar from './Navbar'; // Adjust the import path according to your project structure
 
 const CartPage = () => {
-  const location = useLocation(); // Get location state
-  const { cartItems } = location.state || { cartItems: [] };
-  const navigate = useNavigate(); // Use navigate instead of useHistory
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState(location.state?.cartItems || []);
 
-  const handleRemove = (id) => {
-    // Handle removing item from the cart
-    const updatedCartItems = cartItems.filter(item => item.id !== id);
-    navigate('/cart', { state: { cartItems: updatedCartItems } }); // Use navigate instead of history.replace
+  const handleRemoveFromCart = (indexToRemove) => {
+    const updatedCartItems = [...cartItems];
+    updatedCartItems.splice(indexToRemove, 1); // Remove the specific item at the given index
+    setCartItems(updatedCartItems);
+    // Optionally navigate to the cart page with updated items
+    navigate('/cart', { state: { cartItems: updatedCartItems } });
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto p-8">
-        <h1 className="text-4xl font-bold mb-8">Your Cart</h1>
-        {cartItems.length === 0 ? (
-          <p className="text-xl">Your cart is empty</p>
-        ) : (
-          <div className="space-y-4">
-            {cartItems.map((item) => (
+    <div className="bg-[#cdac79] min-h-screen">
+      <Navbar /> {/* Include the Navbar component */}
+      <div className="container mx-auto p-4">
+        <h2 className="text-center text-5xl font-bold text-brown-light mb-12">
+          Your Cart
+        </h2>
+        {cartItems.length > 0 ? (
+          <div>
+            {cartItems.map((item, index) => (
               <div
-                key={item.id}
-                className="flex justify-between items-center p-4 bg-gray-100 rounded-lg shadow"
+                key={index}
+                className="flex items-center justify-between p-3 border-b border-gray-300 bg-[#ffe5b6] rounded-lg shadow-md mb-3"
               >
-                <div className="flex items-center">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-16 h-16 object-cover rounded-md"
-                  />
-                  <div className="ml-4">
-                    <p className="text-lg font-semibold">{item.name}</p>
-                    <p className="text-gray-600">Rs. {item.price}</p>
+                <div className="flex items-center space-x-4">
+                  <div className="w-20 h-20">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
                   </div>
+                  <p className="text-2xl font-semibold">{item.name}</p>
                 </div>
+                <p className="text-2xl font-semibold">Rs. {item.price}</p>
                 <button
-                  onClick={() => handleRemove(item.id)}
-                  className="text-red-500 hover:text-red-700"
+                  onClick={() => handleRemoveFromCart(index)}
+                  className="text-white font-bold text-xl py-4 px-6 rounded-full bg-brown-light hover:bg-yellow-400 transition-colors duration-300"
                 >
                   Remove
                 </button>
               </div>
             ))}
           </div>
+        ) : (
+          <p className="text-center text-lg">Your cart is empty.</p>
         )}
       </div>
     </div>

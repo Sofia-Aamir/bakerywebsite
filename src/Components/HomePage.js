@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import homepage from '../images/homepage.png';
 import Navbar from './Navbar';
-import CartIcon from './CartIcon';
-import { useNavigate } from 'react-router-dom'; // Updated import
-
-// Example images for products (Replace these with actual image imports)
+import CartIcon from './CartIcon'; // Import the CartIcon component
+import Footer from './Footer';
 import cake from '../images/cake.png';
 import biscuit from '../images/biscuits.png';
 import pizza from '../images/pizza.png';
@@ -15,9 +13,6 @@ import muffin from '../images/muffins.png';
 import croissant from '../images/croissant.png';
 
 const HomePage = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const navigate = useNavigate(); // Use navigate instead of useHistory
-
   const products = [
     { id: 1, name: 'Cake', image: cake, price: '500' },
     { id: 2, name: 'Biscuit', image: biscuit, price: '200' },
@@ -29,13 +24,25 @@ const HomePage = () => {
     { id: 8, name: 'Croissant', image: croissant, price: '250' },
   ];
 
-  const addToCart = (product) => {
-    setCartItems((prevItems) => [...prevItems, product]);
+  const [startIndex, setStartIndex] = useState(0);
+  const itemsToShow = 4;
+
+  const [cartItems, setCartItems] = useState([]); // State to manage cart items
+
+  const handleAddToCart = (product) => {
+    setCartItems([...cartItems, product]);
   };
 
-  const goToCart = () => {
-    navigate('/cart', { state: { cartItems } }); // Use navigate instead of history.push
+  const handleNextClick = () => {
+    setStartIndex((prevIndex) =>
+      prevIndex + itemsToShow >= products.length ? 0 : prevIndex + itemsToShow
+    );
   };
+
+  const displayedProducts = products.slice(
+    startIndex,
+    startIndex + itemsToShow
+  );
 
   return (
     <div>
@@ -49,8 +56,9 @@ const HomePage = () => {
           position: 'relative',
         }}
       >
-        <Navbar />
-        <CartIcon itemCount={cartItems.length} onClick={goToCart} />
+        <Navbar itemCount={cartItems.length} cartItems={cartItems} /> {/* Pass cartItems and itemCount */}
+        {/* Other components */}
+        <CartIcon itemCount={cartItems.length} cartItems={cartItems} /> {/* Display Cart Icon with item count */}
 
         {/* Tree Form Sentence */}
         <div className="absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/3 text-5xl font-bold text-brown-light">
@@ -86,7 +94,7 @@ const HomePage = () => {
           Special Products
         </h2>
         <div className="flex justify-center items-center space-x-8 overflow-x-auto">
-          {products.slice(0, 4).map((product) => (
+          {displayedProducts.map((product) => (
             <div key={product.id} className="text-center flex-shrink-0">
               <div
                 className="w-48 h-48 mx-auto rounded-full overflow-hidden shadow-lg hover:animate-vibrate"
@@ -99,55 +107,58 @@ const HomePage = () => {
               <p className="mt-4 text-2xl font-semibold text-brown-light">
                 {product.name}
               </p>
-              <button
-                onClick={() => addToCart(product)}
-                className="mt-2 px-4 py-2 text-white bg-red-500 rounded transition-colors duration-300 ease-in-out hover:bg-[#cdac79]"
-              >
-                Add to Cart
-              </button>
             </div>
           ))}
+          <button
+            onClick={handleNextClick}
+            className="text-brown-light text-3xl hover:text-yellow-400 transition-transform transform hover:scale-110"
+          >
+            &#10095;
+          </button>
         </div>
       </div>
 
       {/* Our Products Section */}
       <div className="bg-white py-7" style={{ marginTop: '-20px', backgroundColor: '#cdac79' }}>
-        <h2 className="text-center text-5xl font-bold text-brown-light mb-12">
-          Our Products
-        </h2>
-        <div className="grid grid-cols-4 gap-5 px-10" style={{ marginTop: '-4px' }}>
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="border border-gray-300 p-4 rounded-lg shadow-lg text-center transform transition-transform duration-300 hover:translate-y-[-5px]"
-              style={{ backgroundColor: '#ffe5b6' }}
-            >
-              <div
-                className="w-full h-48 mx-auto overflow-hidden rounded-md"
-                style={{
-                  backgroundImage: `url(${product.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              ></div>
-              <p className="mt-4 text-3xl font-semibold text-brown-light">
-                {product.name}
-              </p>
-              <div className="flex justify-between items-center mt-2">
-                <p className="text-2xl font-bold text-gray-700">
-                  Rs. {product.price}
-                </p>
-                <button
-                  onClick={() => addToCart(product)}
-                  className="px-4 py-2 text-white bg-red-500 rounded transition-colors duration-300 ease-in-out hover:bg-[#cdac79]"
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          ))}
+  <h2 className="text-center text-5xl font-bold text-brown-light mb-12">
+    Our Products
+  </h2>
+  <div className="grid grid-cols-4 gap-5 px-10" style={{ marginTop: '-4px' }}>
+    {products.slice(0, 4).map((product) => (
+      <div
+        key={product.id}
+        className="border border-gray-300 p-4 rounded-lg shadow-lg text-center transform transition-transform duration-300 hover:translate-y-[-5px]"
+        style={{ backgroundColor: '#ffe5b6' }}
+      >
+        <div
+          className="w-full h-48 mx-auto overflow-hidden rounded-md"
+          style={{
+            backgroundImage: `url(${product.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        ></div>
+        <p className="mt-4 text-3xl font-semibold text-brown-light">
+          {product.name}
+        </p>
+        {/* Flex container for price and Add to Cart button */}
+        <div className="flex justify-between items-center mt-2">
+          <p className="text-2xl text-brown-light">
+            Rs. {product.price}
+          </p>
+          <button
+            onClick={() => handleAddToCart(product)}
+            className="text-white font-bold py-2 px-4 rounded-full bg-brown-light hover:bg-yellow-400 transition-colors duration-300"
+          >
+            Add to Cart
+          </button>
         </div>
       </div>
+    ))}
+  </div>
+</div>
+
+<Footer/>
     </div>
   );
 };
