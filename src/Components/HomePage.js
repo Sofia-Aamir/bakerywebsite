@@ -40,11 +40,19 @@ const HomePage = () => {
 
   const handleAddToCart = (product) => {
     setCartItems((prevItems) => {
-      const updatedItems = [...prevItems, product];
-      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-      return updatedItems;
+      const existingItem = prevItems.find(item => item.id === product.id);
+      if (existingItem) {
+        // Increment the quantity if the item already exists in the cart
+        return prevItems.map(item =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      } else {
+        // Add new item to the cart with a quantity of 1
+        return [...prevItems, { ...product, quantity: 1 }];
+      }
     });
   };
+  
 
   const handleNextClick = () => {
     setStartIndex((prevIndex) =>
